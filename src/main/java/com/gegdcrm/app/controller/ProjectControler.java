@@ -38,21 +38,21 @@ import javax.validation.Validator;
  * 
  */
 @RestController
-@RequestMapping("/bidder/v1")
+@RequestMapping("/project/v1")
 public class ProjectControler {
 
 	@Autowired
-	ProjectRep bidderRep;
+	ProjectRep projectRep;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
 	@SuppressWarnings("rawtypes")
-	@PostMapping("/savebidder")
-	ResponseEntity saveBidder(@RequestBody ProjectBean bidderBean) {
-		logger.info("staring saveBidder");
+	@PostMapping("/saveproject")
+	ResponseEntity saveProject(@RequestBody ProjectBean projectBean) {
+		logger.info("staring saveproject");
 		String errorMsg = "";
 		
-		Set<ConstraintViolation<ProjectBean>> constraintViolations = validator.validate(bidderBean);
+		Set<ConstraintViolation<ProjectBean>> constraintViolations = validator.validate(projectBean);
 		if (constraintViolations.size() > 0) {
 			for (ConstraintViolation<ProjectBean> cv : constraintViolations) {
 				errorMsg = errorMsg + cv.getMessage();
@@ -62,86 +62,86 @@ public class ProjectControler {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(errorMsg);
 		}
-		bidderRep.saveAndFlush(bidderBean);
-		logger.info("ending saveBidder");
-		return new ResponseEntity<ProjectBean>(bidderBean, HttpStatus.OK);
+		projectRep.saveAndFlush(projectBean);
+		logger.info("ending saveProject");
+		return new ResponseEntity<ProjectBean>(projectBean, HttpStatus.OK);
 	}
 
-	@GetMapping("/getAllBidder")
-	ResponseEntity<List<ProjectBean>> getAllBidders(
+	@GetMapping("/getallprojects")
+	ResponseEntity<List<ProjectBean>> getAllprojects(
 			@RequestHeader("userAgent") String userAgent) {
 
 		if (userAgent != null && !userAgent.isEmpty())
 			return new ResponseEntity<List<ProjectBean>>(
 					HttpStatus.UNAUTHORIZED);
-		return new ResponseEntity<List<ProjectBean>>(bidderRep.findAll(),
+		return new ResponseEntity<List<ProjectBean>>(projectRep.findAll(),
 				HttpStatus.OK);
 	}
 	
 	@GetMapping("/error")
-	 ResponseEntity<ProjectBean> errorBidder() {
-		return new ResponseEntity("Not a valid user",
+	 ResponseEntity<ProjectBean> errorproject() {
+		return new ResponseEntity("Not a valid project",
 				HttpStatus.UNAUTHORIZED);
-		//return new ResponseEntity<List<BidderBean>>(bidderRep.findAll(),HttpStatus.OK);
+		//return new ResponseEntity<List<ProjectBean>>(projectRep.findAll(),HttpStatus.OK);
 	}
 	
-	@GetMapping("/getBidder/{BidderId}")
-	ResponseEntity<ProjectBean> getBidder(
-			@PathVariable("BidderId") Integer bidderId) {
-		logger.info("Started getBidder");
-		if (bidderId != null && bidderId != 0) {
-		logger.info("Ended getBidder");
+	@GetMapping("/getproject/{projectId}")
+	ResponseEntity<ProjectBean> getProject(
+			@PathVariable("projectId") Integer projectId) {
+		logger.info("Started getProject");
+		if (projectId != null && projectId != 0) {
+		logger.info("Ended getProject");
 			return new ResponseEntity<ProjectBean>(
-					(ProjectBean) bidderRep.findOne(bidderId),
+					(ProjectBean) projectRep.findOne(projectId),
 					HttpStatus.OK);
 		} else {
-			return new ResponseEntity("bidderId is mandatry..",
+			return new ResponseEntity("projectId is mandatry..",
 					HttpStatus.PRECONDITION_REQUIRED);
 		}
 	}
 
-	@GetMapping("/deleteBidder/{BidderId}")
-	boolean delete(@PathVariable("BidderId") Integer BidderId) {
+	@GetMapping("/deleteProject/{ProjectId}")
+	boolean delete(@PathVariable("ProjectId") Integer ProjectId) {
 		logger.info("Started delete");
-		bidderRep.delete(BidderId);
+		projectRep.delete(ProjectId);
 		logger.info("Ended delete");
-		return bidderRep.exists(BidderId);
+		return projectRep.exists(ProjectId);
 	}
 
-	@GetMapping("/getPageBidder/{start}/{size}")
-	ResponseEntity<List<ProjectBean>> getPageBidder(
+	@GetMapping("/getPageProject/{start}/{size}")
+	ResponseEntity<List<ProjectBean>> getPageProject(
 			@PathVariable("start") Integer start,
 			@PathVariable("size") Integer size) {
-		logger.info("Started getPageBidder");
+		logger.info("Started getPageProject");
 
 		if (start != null && size != null && size != 0) {
-			Iterable<ProjectBean> bean = bidderRep.findAll(new PageRequest(
+			Iterable<ProjectBean> bean = projectRep.findAll(new PageRequest(
 					start, size));
-			ArrayList<ProjectBean> bidderList = new ArrayList<ProjectBean>();
+			ArrayList<ProjectBean> projectList = new ArrayList<ProjectBean>();
 			if (bean != null) {
-				for (ProjectBean bidderBean : bean) {
-					bidderList.add(bidderBean);
+				for (ProjectBean projectBean : bean) {
+					projectList.add(projectBean);
 				}
-		logger.info("Ended getPageBidder");
-				return new ResponseEntity<List<ProjectBean>>(bidderList,
+		logger.info("Ended getPageProject");
+				return new ResponseEntity<List<ProjectBean>>(projectList,
 						HttpStatus.OK);
 			} else {
-				return new ResponseEntity<List<ProjectBean>>(bidderList,
+				return new ResponseEntity<List<ProjectBean>>(projectList,
 						HttpStatus.OK);
 			}
 		} else {
-			return new ResponseEntity("bidderId is mandatry..",
+			return new ResponseEntity("projectId is mandatry..",
 					HttpStatus.PRECONDITION_REQUIRED);
 		}
 	}
 	
-	@GetMapping("/getPageBidder/{start}/{size}/{field}/{dir}")
-	ResponseEntity<List<ProjectBean>> getSortPageBidder(
+	@GetMapping("/getPageProject/{start}/{size}/{field}/{dir}")
+	ResponseEntity<List<ProjectBean>> getSortPageProject(
 			@PathVariable("start") Integer start,
 			@PathVariable("size") Integer size,
 			@PathVariable("dir") String direction,
 			@PathVariable("field") String field) throws CustomException {
-		logger.info("Started getPageBidder");
+		logger.info("Started getPageProject");
 
 		if (start != null && size != null && size != 0 && !direction.isEmpty() && direction != null && !field.isEmpty() && field != null) {
 			Direction sort = null;
@@ -150,18 +150,18 @@ public class ProjectControler {
 			else if(direction.equalsIgnoreCase("DESC")){
 				 sort = Sort.Direction.DESC;
 			    }
-			Iterable<ProjectBean> bean = bidderRep.findAll(new PageRequest(
+			Iterable<ProjectBean> bean = projectRep.findAll(new PageRequest(
 					start, size,sort,field));
-			ArrayList<ProjectBean> bidderList = new ArrayList<ProjectBean>();
+			ArrayList<ProjectBean> projectList = new ArrayList<ProjectBean>();
 			if (bean != null) {
-				for (ProjectBean bidderBean : bean) {
-					bidderList.add(bidderBean);
+				for (ProjectBean projectBean : bean) {
+					projectList.add(projectBean);
 				}
-		logger.info("Ended getPageBidder");
-				return new ResponseEntity<List<ProjectBean>>(bidderList,
+		logger.info("Ended getPageProject");
+				return new ResponseEntity<List<ProjectBean>>(projectList,
 						HttpStatus.OK);
 			} else {
-				return new ResponseEntity<List<ProjectBean>>(bidderList,
+				return new ResponseEntity<List<ProjectBean>>(projectList,
 						HttpStatus.OK);
 			}
 		} else {
@@ -169,7 +169,7 @@ public class ProjectControler {
 			  //eT.throwGeneralException();
 			  eT.throwCustomException();
 			  //eT.throwNullPointerException();
-			return new ResponseEntity("bidderId is mandatry..",
+			return new ResponseEntity("projectId is mandatry..",
 					HttpStatus.PRECONDITION_REQUIRED);
 		}
 	}

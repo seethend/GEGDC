@@ -5,14 +5,12 @@ package com.gegdcrm.app.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 /**
- * @author ck00462842
+ * @author charan kandula
  *
  */
 @Entity
@@ -20,10 +18,10 @@ public class ProjectBean {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int bidderId;
+	private int projectId;
 	//cancle or active or Inactive
 	@Column
-	private int bidderStatus;
+	private int projectStatus;
 	@Column
 	private String amount;
 	@Column
@@ -34,19 +32,19 @@ public class ProjectBean {
 	@Column
 	private boolean notifyByMail;
 	@Column
-	private String biddingMessage;
+	private String projectMessage;
 
-	public int getBidderId() {
-		return bidderId;
+	public int getProjectId() {
+		return projectId;
 	}
-	public void setBidderId(int bidderId) {
-		this.bidderId = bidderId;
+	public void setProjectId(int bidderId) {
+		this.projectId = bidderId;
 	}
-	public int getBidderStatus() {
-		return bidderStatus;
+	public int getProjectStatus() {
+		return projectStatus;
 	}
-	public void setBidderStatus(int bidderStatus) {
-		this.bidderStatus = bidderStatus;
+	public void setProjectStatus(int bidderStatus) {
+		this.projectStatus = bidderStatus;
 	}
 	public String getAmount() {
 		return amount;
@@ -67,10 +65,10 @@ public class ProjectBean {
 		this.notifyByMail = notifyByMail;
 	}
 	public String getBiddingMessage() {
-		return biddingMessage;
+		return projectMessage;
 	}
-	public void setBiddingMessage(String biddingMessage) {
-		this.biddingMessage = biddingMessage;
+	public void setBiddingMessage(String projectMessage) {
+		this.projectMessage = projectMessage;
 	}
 
 }
